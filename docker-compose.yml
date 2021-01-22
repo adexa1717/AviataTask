@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  redis:
+    restart: always
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  cron:
+    restart: always
+    container_name: cron
+    build: ./
+    command: python cron.py
+    depends_on:
+      - redis
+  server:
+    restart: always
+    container_name: server
+    build: ./
+    command: python server.py
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cron
+      - redis
+
